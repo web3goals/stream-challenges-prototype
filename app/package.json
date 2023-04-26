@@ -1,0 +1,39 @@
+{
+  "name": "stream-challenges-app",
+  "version": "0.1",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.10.5",
+    "@emotion/styled": "^11.10.5",
+    "@mui/icons-material": "^5.10.9",
+    "@mui/lab": "^5.0.0-alpha.106",
+    "@mui/material": "^5.10.12",
+    "@rainbow-me/rainbowkit": "^0.8.1",
+    "@svgr/webpack": "^6.5.1",
+    "axios": "^1.1.3",
+    "ethers": "^5.7.2",
+    "formik": "^2.2.9",
+    "next": "13.0.1",
+    "nextjs-progressbar": "^0.0.16",
+    "notistack": "^2.0.8",
+    "qs": "^6.11.0",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "react-dropzone": "^14.2.3",
+    "typescript": "^4.8.4",
+    "wagmi": "^0.11.0",
+    "yup": "^0.32.11"
+  },
+  "devDependencies": {
+    "@types/node": "18.11.8",
+    "@types/qs": "^6.9.7",
+    "@types/react": "18.0.24",
+    "@types/react-dom": "18.0.8"
+  }
+}
