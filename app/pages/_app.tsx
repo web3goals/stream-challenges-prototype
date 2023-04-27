@@ -1,3 +1,4 @@
+import { useHuddle01 } from "@huddle01/react";
 import { ThemeProvider } from "@mui/material";
 import {
   getDefaultWallets,
@@ -41,13 +42,21 @@ const wagmiClient = createClient({
 });
 
 export default function App({ Component, pageProps }: AppProps) {
-  const [pageLoaded, setPageLoaded] = useState(false);
+  const [isPageLoaded, setIsPageLoaded] = useState(false);
+  const {
+    initialize: initializeHuddle01,
+    isInitialized: isHuddle01Initialized,
+  } = useHuddle01();
 
   /**
    * Fix for hydration error (docs - https://github.com/vercel/next.js/discussions/35773#discussioncomment-3484225)
    */
   useEffect(() => {
-    setPageLoaded(true);
+    setIsPageLoaded(true);
+  }, []);
+
+  useEffect(() => {
+    initializeHuddle01(process.env.NEXT_PUBLIC_HUDDLE01_PROJECT_ID || "");
   }, []);
 
   return (
@@ -60,7 +69,9 @@ export default function App({ Component, pageProps }: AppProps) {
           <SnackbarProvider maxSnack={3}>
             <DialogProvider>
               <NextNProgress height={4} color={theme.palette.primary.main} />
-              {pageLoaded && <Component {...pageProps} />}
+              {isPageLoaded && isHuddle01Initialized && (
+                <Component {...pageProps} />
+              )}
             </DialogProvider>
           </SnackbarProvider>
         </ThemeProvider>
