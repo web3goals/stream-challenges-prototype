@@ -1,5 +1,5 @@
 import hre, { ethers } from "hardhat";
-import { Profile__factory } from "../../typechain-types";
+import { Challenge__factory, Profile__factory } from "../../typechain-types";
 import { contracts } from "./contracts";
 import { deployWithLogs, upgradeProxyWithLogs } from "./utils";
 
@@ -44,6 +44,28 @@ async function main() {
       chainContracts.profile.name,
       chainContracts.profile.proxy,
       new Profile__factory(deployerWallet)
+    );
+  }
+
+  // Deploy or upgrade challenge contract
+  if (!chainContracts.challenge.proxy) {
+    const contract = await deployWithLogs({
+      chainName: chain,
+      contractName: chainContracts.challenge.name,
+      contractFactory: new Challenge__factory(deployerWallet),
+      isProxyRequired: chainContracts.challenge.isUpgreadable,
+      isInitializeRequired: chainContracts.challenge.isInitializable,
+    });
+    chainContracts.challenge.proxy = contract.address;
+  } else if (
+    chainContracts.challenge.isUpgreadable &&
+    !chainContracts.challenge.impl
+  ) {
+    await upgradeProxyWithLogs(
+      chain,
+      chainContracts.challenge.name,
+      chainContracts.challenge.proxy,
+      new Challenge__factory(deployerWallet)
     );
   }
 }
