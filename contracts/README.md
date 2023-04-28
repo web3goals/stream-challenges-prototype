@@ -6,3 +6,7 @@
 - Run tests - `npx hardhat test`
 - Deploy contracts - `npx hardhat run scripts/deploy/index.ts --network hyperspace`
 - Run sandbox script - `npx hardhat run scripts/sandbox.ts --network hyperspace`
+
+## Links
+
+- Hyperspace explorer - https://hyperspace.filfox.info/en
