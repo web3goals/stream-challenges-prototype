@@ -1,9 +1,28 @@
 import { Signer } from "ethers";
 import { ethers } from "hardhat";
-import { Profile, Profile__factory } from "../typechain-types";
+import {
+  Challenge,
+  Challenge__factory,
+  Profile,
+  Profile__factory,
+} from "../typechain-types";
 import { revertToSnapshot, takeSnapshot } from "./helpers/utils";
 
 export const profileUris = {
+  one: "ipfs://abc",
+  two: "ipfs://def",
+  three: "ipfs://123",
+  four: "ipfs://456",
+};
+
+export const streamDescriptions = {
+  one: "abc",
+  two: "def",
+  three: "123",
+  four: "456",
+};
+
+export const streamUris = {
   one: "ipfs://abc",
   two: "ipfs://def",
   three: "ipfs://123",
@@ -24,6 +43,7 @@ export let userThreeAddress: string;
 export let userFourAddress: string;
 
 export let profileContract: Profile;
+export let challengeContract: Challenge;
 
 export function makeSuiteCleanRoom(name: string, tests: () => void) {
   return describe(name, () => {
@@ -63,4 +83,8 @@ before(async function () {
   // Deploy profile contract
   profileContract = await new Profile__factory(deployer).deploy();
   await profileContract.initialize();
+
+  // Deploy challenge contract
+  challengeContract = await new Challenge__factory(deployer).deploy();
+  await challengeContract.initialize();
 });
