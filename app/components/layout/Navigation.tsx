@@ -1,7 +1,6 @@
 import { GitHub, MenuRounded } from "@mui/icons-material";
 import {
   AppBar,
-  Button,
   Container,
   Divider,
   IconButton,
@@ -96,9 +95,6 @@ function NavigationDesktop(props: { sx?: SxProps }) {
 
   return (
     <Box sx={{ alignItems: "center", ...props.sx }}>
-      <Link href="/challenges/start" legacyBehavior>
-        <Button variant="contained">Start Challenge</Button>
-      </Link>
       {isConnected && (
         <Link href={`/accounts/${address}`} passHref legacyBehavior>
           <MuiLink fontWeight={700} color="inherit" ml={3.5}>
@@ -106,14 +102,14 @@ function NavigationDesktop(props: { sx?: SxProps }) {
           </MuiLink>
         </Link>
       )}
+      <Link href="/#challenge" passHref legacyBehavior>
+        <MuiLink fontWeight={700} color="inherit" ml={3.5}>
+          Challenge
+        </MuiLink>
+      </Link>
       <Link href="/leaderboard" passHref legacyBehavior>
         <MuiLink fontWeight={700} color="inherit" ml={3.5}>
           Leaderboard
-        </MuiLink>
-      </Link>
-      <Link href="/explore" passHref legacyBehavior>
-        <MuiLink fontWeight={700} color="inherit" ml={3.5}>
-          Explore
         </MuiLink>
       </Link>
       <Box ml={3.5}>
@@ -133,10 +129,9 @@ function NavigationMobile(props: { sx?: SxProps }) {
         chainStatus="icon"
       />
       <NavigationMenu
-        displayStartChallengeButton
         displayAccountLink
+        displayChallengeLink
         displayLeaderboardLink
-        displayExploreLink
         sx={{ ml: 1.5 }}
       />
     </Box>
@@ -144,10 +139,9 @@ function NavigationMobile(props: { sx?: SxProps }) {
 }
 
 function NavigationMenu(props: {
-  displayStartChallengeButton?: boolean;
   displayAccountLink?: boolean;
+  displayChallengeLink?: boolean;
   displayLeaderboardLink?: boolean;
-  displayExploreLink?: boolean;
   sx?: SxProps;
 }) {
   const { isConnected, address } = useAccount();
@@ -208,26 +202,19 @@ function NavigationMenu(props: {
         transformOrigin={{ horizontal: "right", vertical: "top" }}
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
-        {props.displayStartChallengeButton && (
-          <Link href="/challenges/start" legacyBehavior>
-            <MenuItem>
-              <Button variant="contained">Start Challenge</Button>
-            </MenuItem>
-          </Link>
-        )}
         {props.displayAccountLink && isConnected && (
           <Link href={`/accounts/${address}`} passHref legacyBehavior>
             <MenuItem>Account</MenuItem>
           </Link>
         )}
+        {props.displayChallengeLink && (
+          <Link href="/#challenge" passHref legacyBehavior>
+            <MenuItem>Challenge</MenuItem>
+          </Link>
+        )}
         {props.displayLeaderboardLink && (
           <Link href="/leaderboard" passHref legacyBehavior>
             <MenuItem>Leaderboard</MenuItem>
-          </Link>
-        )}
-        {props.displayExploreLink && (
-          <Link href="/explore" passHref legacyBehavior>
-            <MenuItem>Explore</MenuItem>
           </Link>
         )}
         <Divider />

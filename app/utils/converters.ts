@@ -79,6 +79,18 @@ export function bigNumberTimestampToLocaleDateString(
 }
 
 /**
+ * Convert big number like "1677628800" to string "3/14/2023, 5:33:26 PM".
+ */
+export function bigNumberTimestampToLocaleString(
+  timestamp?: BigNumber
+): string {
+  if (!timestamp) {
+    return "Unknown";
+  }
+  return new Date(timestamp.toNumber() * 1000).toLocaleString();
+}
+
+/**
  * Convert string like "1677628800" to string "3/14/2023, 5:33:26 PM".
  */
 export function stringTimestampToLocaleString(
