@@ -20,7 +20,7 @@ export function ipfsUriToHttpUri(ipfsUri?: string): string {
   if (!ipfsUri || !ipfsUri.startsWith("ipfs://")) {
     throw new Error(`Fail to converting IPFS URI to HTTP URI: ${ipfsUri}`);
   }
-  return ipfsUri.replace("ipfs://", "https://w3s.link/ipfs/");
+  return ipfsUri.replace("ipfs://", "https://gateway.lighthouse.storage/ipfs/");
 }
 
 /**

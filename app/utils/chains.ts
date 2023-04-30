@@ -4,6 +4,7 @@ import { stringToAddress } from "./converters";
 interface ChainConfig {
   chain: Chain;
   contractAddresses: {
+    profile: string;
     challenge: string;
   };
 }
@@ -13,10 +14,14 @@ interface ChainConfig {
  */
 export function getSupportedChainConfigs(): ChainConfig[] {
   const chainConfigs: ChainConfig[] = [];
-  if (process.env.NEXT_PUBLIC_HYPERSPACE_CHALLENGE_CONTRACT_ADDRESS) {
+  if (
+    process.env.NEXT_PUBLIC_HYPERSPACE_PROFILE_CONTRACT_ADDRESS &&
+    process.env.NEXT_PUBLIC_HYPERSPACE_CHALLENGE_CONTRACT_ADDRESS
+  ) {
     chainConfigs.push({
       chain: filecoinHyperspace,
       contractAddresses: {
+        profile: process.env.NEXT_PUBLIC_HYPERSPACE_PROFILE_CONTRACT_ADDRESS,
         challenge:
           process.env.NEXT_PUBLIC_HYPERSPACE_CHALLENGE_CONTRACT_ADDRESS,
       },
@@ -74,6 +79,17 @@ export function chainToSupportedChainNativeCurrencySymbol(
   chain: Chain | undefined
 ): string | undefined {
   return chainToSupportedChainConfig(chain).chain.nativeCurrency.symbol;
+}
+
+/**
+ * Return profile contract address of specified chain if it supported, otherwise return value from default supported chain.
+ */
+export function chainToSupportedChainProfileContractAddress(
+  chain: Chain | undefined
+): `0x${string}` | undefined {
+  return stringToAddress(
+    chainToSupportedChainConfig(chain).contractAddresses.profile
+  );
 }
 
 /**
