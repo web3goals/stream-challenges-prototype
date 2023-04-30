@@ -102,24 +102,28 @@ contract Challenge is
         emit ChallengeStarted(newTokenId, params);
     }
 
-    function startStream(string memory description) public whenNotPaused {
+    function startStream(
+        string memory identifier,
+        string memory description
+    ) public whenNotPaused {
         // Check data
         if (_isLastChallengeFinished()) {
             revert Errors.LastChallengeFinished();
         }
-        (bool isExists, ) = _isLastChallengeStreamExists(msg.sender);
-        if (isExists) {
+        DataTypes.ChallengeStreamParams
+            memory stream = _getLastChallengeStreamByAuthorAddress(msg.sender);
+        if (stream.startedTimestamp != 0) {
             revert Errors.StreamAlreadyStarted();
         }
         // Add stream
-        DataTypes.ChallengeStreamParams memory stream = DataTypes
-            .ChallengeStreamParams(
-                block.timestamp,
-                0,
-                msg.sender,
-                description,
-                ""
-            );
+        stream = DataTypes.ChallengeStreamParams(
+            block.timestamp,
+            0,
+            identifier,
+            msg.sender,
+            description,
+            ""
+        );
         _streams[_counter.current()].push(stream);
         emit StreamStarted(_counter.current(), stream.authorAddress, stream);
         // Add streamer if not exists
@@ -136,27 +140,30 @@ contract Challenge is
         if (_isLastChallengeFinished()) {
             revert Errors.LastChallengeFinished();
         }
-        (bool isExists, uint index) = _isLastChallengeStreamExists(msg.sender);
-        if (!isExists) {
-            revert Errors.StreamNotFound();
+        DataTypes.ChallengeStreamParams
+            memory stream = _getLastChallengeStreamByAuthorAddress(msg.sender);
+        if (stream.startedTimestamp == 0) {
+            revert Errors.StreamNotStarted();
         }
-        if (_streams[_counter.current()][index].finishedTimestamp != 0) {
+        if (stream.finishedTimestamp != 0) {
             revert Errors.StreamAlreadyFinished();
         }
         // Update stream
-        _streams[_counter.current()][index].finishedTimestamp = block.timestamp;
-        _streams[_counter.current()][index].extraDataURI = extraDataUri;
-        emit StreamFinished(
-            _counter.current(),
-            _streams[_counter.current()][index].authorAddress,
-            _streams[_counter.current()][index]
-        );
+        for (uint i = 0; i < _streams[_counter.current()].length; i++) {
+            if (_streams[_counter.current()][i].authorAddress == msg.sender) {
+                _streams[_counter.current()][i].finishedTimestamp = block
+                    .timestamp;
+                _streams[_counter.current()][i].extraDataURI = extraDataUri;
+                emit StreamFinished(
+                    _counter.current(),
+                    _streams[_counter.current()][i].authorAddress,
+                    _streams[_counter.current()][i]
+                );
+            }
+        }
         // Update streamer
         for (uint i = 0; i < _streamers.length; i++) {
-            if (
-                _streamers[i].accountAddress ==
-                _streams[_counter.current()][index].authorAddress
-            ) {
+            if (_streamers[i].accountAddress == stream.authorAddress) {
                 _streamers[i].successfulStreams++;
                 emit StreamerUpdated(
                     _streamers[i].accountAddress,
@@ -194,6 +201,12 @@ contract Challenge is
         returns (DataTypes.ChallengeParams memory)
     {
         return _params[_counter.current()];
+    }
+
+    function getLastChallengeStreamByAuthorAddress(
+        address authorAddress
+    ) public view returns (DataTypes.ChallengeStreamParams memory) {
+        return _getLastChallengeStreamByAuthorAddress(authorAddress);
     }
 
     function getLastChallengeStreams()
@@ -246,17 +259,18 @@ contract Challenge is
         return block.timestamp > _params[_counter.current()].finishTimestamp;
     }
 
-    function _isLastChallengeStreamExists(
+    function _getLastChallengeStreamByAuthorAddress(
         address authorAddress
-    ) internal view returns (bool isExists, uint index) {
+    ) internal view returns (DataTypes.ChallengeStreamParams memory) {
         for (uint i = 0; i < _streams[_counter.current()].length; i++) {
             if (
                 _streams[_counter.current()][i].authorAddress == authorAddress
             ) {
-                return (true, i);
+                return _streams[_counter.current()][i];
             }
         }
-        return (false, 0);
+        DataTypes.ChallengeStreamParams memory stream;
+        return stream;
     }
 
     function _isStreamerExists(

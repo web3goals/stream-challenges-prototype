@@ -2,6 +2,7 @@ import {
   challengeContract,
   makeSuiteCleanRoom,
   streamDescriptions,
+  streamIdentifiers,
   streamUris,
   userOne,
   userTwo,
@@ -15,10 +16,10 @@ makeSuiteCleanRoom("Challenge Stream Finishing", function () {
     await challengeContract.connect(userOne).startChallenge();
     await challengeContract
       .connect(userOne)
-      .startStream(streamDescriptions.one);
+      .startStream(streamIdentifiers.one, streamDescriptions.one);
     await challengeContract
       .connect(userTwo)
-      .startStream(streamDescriptions.two);
+      .startStream(streamIdentifiers.two, streamDescriptions.two);
   });
 
   it("Users should be able to finish a challenge stream", async function () {

@@ -10,6 +10,7 @@ library DataTypes {
     struct ChallengeStreamParams {
         uint startedTimestamp;
         uint finishedTimestamp;
+        string identifier;
         address authorAddress;
         string description;
         string extraDataURI;

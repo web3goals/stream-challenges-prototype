@@ -5,6 +5,7 @@ import {
   challengeContract,
   makeSuiteCleanRoom,
   streamDescriptions,
+  streamIdentifiers,
   userOne,
   userTwo,
 } from "../../setup";
@@ -17,15 +18,21 @@ makeSuiteCleanRoom("Challenge Stream Starting", function () {
   it("Users should be able to start a challenge stream", async function () {
     // Try one by user one
     await expect(
-      challengeContract.connect(userOne).startStream(streamDescriptions.one)
+      challengeContract
+        .connect(userOne)
+        .startStream(streamIdentifiers.one, streamDescriptions.one)
     ).to.emit(challengeContract, EVENTS.streamStarted);
     // Try one by user two
     await expect(
-      challengeContract.connect(userTwo).startStream(streamDescriptions.two)
+      challengeContract
+        .connect(userTwo)
+        .startStream(streamIdentifiers.two, streamDescriptions.two)
     ).to.emit(challengeContract, EVENTS.streamStarted);
     // Try two by user two
     await expect(
-      challengeContract.connect(userTwo).startStream(streamDescriptions.two)
+      challengeContract
+        .connect(userTwo)
+        .startStream(streamIdentifiers.three, streamDescriptions.two)
     ).to.be.revertedWithCustomError(
       challengeContract,
       ERRORS.streamAlreadyStarted

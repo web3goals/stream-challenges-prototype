@@ -5,7 +5,7 @@ library Errors {
     error TokenNotTransferable();
     error LastChallengeFinished();
     error LastChallengeNotFinished();
-    error StreamNotFound();
     error StreamAlreadyStarted();
+    error StreamNotStarted();
     error StreamAlreadyFinished();
 }

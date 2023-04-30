@@ -15,6 +15,13 @@ export const profileUris = {
   four: "ipfs://456",
 };
 
+export const streamIdentifiers = {
+  one: "a",
+  two: "b",
+  three: "1",
+  four: "2",
+};
+
 export const streamDescriptions = {
   one: "abc",
   two: "def",
