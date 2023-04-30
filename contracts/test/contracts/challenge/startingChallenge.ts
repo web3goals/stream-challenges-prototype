@@ -19,7 +19,7 @@ makeSuiteCleanRoom("Challenge Starting", function () {
       challengeContract,
       ERRORS.lastChallengeNotFinished
     );
-    await time.increase(5 * SECONDS_PER_MINUTE);
+    await time.increase(10 * SECONDS_PER_MINUTE);
     // Try three after increasing time
     await expect(challengeContract.connect(userOne).startChallenge()).to.emit(
       challengeContract,
