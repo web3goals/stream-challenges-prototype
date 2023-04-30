@@ -212,7 +212,7 @@ contract Challenge is
         return _streamers;
     }
 
-    function isLastChallengeFinished() internal view returns (bool) {
+    function isLastChallengeFinished() public view returns (bool) {
         return _isLastChallengeFinished();
     }
 

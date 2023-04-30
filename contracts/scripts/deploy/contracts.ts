@@ -25,8 +25,8 @@ export const contracts: {
       name: "Challenge",
       isUpgreadable: false,
       isInitializable: true,
-      proxy: "0xD9B74758b605B2EcAE3E638A62cb858eD3fbc93a",
-      impl: "0xD9B74758b605B2EcAE3E638A62cb858eD3fbc93a",
+      proxy: "0x5dD311d5b77bc198b023B3AEbe81c3E6Fb38ee25",
+      impl: "0x5dD311d5b77bc198b023B3AEbe81c3E6Fb38ee25",
     },
   },
 };
