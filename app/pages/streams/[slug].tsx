@@ -8,12 +8,14 @@ import {
   useVideo,
 } from "@huddle01/react/hooks";
 import { Box, Stack, Typography } from "@mui/material";
+import StreamFinishDialog from "components/stream/StreamFinishDialog";
 import Layout from "components/layout";
 import { FullWidthSkeleton, LargeLoadingButton } from "components/styled";
+import { DialogContext } from "context/dialog";
 import { challengeContractAbi } from "contracts/abi/challengeContract";
 import { ethers } from "ethers";
 import { useRouter } from "next/router";
-import { useEffect, useRef } from "react";
+import { useContext, useEffect, useRef } from "react";
 import { isAddressesEqual } from "utils/addresses";
 import { chainToSupportedChainChallengeContractAddress } from "utils/chains";
 import { stringToAddress } from "utils/converters";
@@ -126,7 +128,9 @@ function StreamRoom(props: {
   description?: string;
   authorAddress?: string;
 }) {
+  const { showDialog, closeDialog } = useContext(DialogContext);
   const { address } = useAccount();
+  const { push } = useRouter();
   const { produceVideo, stopProducingVideo, stream: videoStream } = useVideo();
   const { peers } = usePeers();
   const {
@@ -181,7 +185,7 @@ function StreamRoom(props: {
         </LargeLoadingButton>
         {isAddressesEqual(address, props.authorAddress) && (
           <LargeLoadingButton
-            variant="contained"
+            variant="outlined"
             disabled={!startRecording.isCallable}
             onClick={() => {
               console.log(
@@ -197,19 +201,24 @@ function StreamRoom(props: {
         )}
         {isAddressesEqual(address, props.authorAddress) && (
           <LargeLoadingButton
-            variant="contained"
+            variant="outlined"
             disabled={!stopRecording.isCallable}
             onClick={() => stopRecording()}
           >
             Stop recording
           </LargeLoadingButton>
         )}
-        {/* TODO: Implement button */}
         {isAddressesEqual(address, props.authorAddress) && (
           <LargeLoadingButton
             variant="contained"
-            disabled={true}
-            onClick={() => {}}
+            onClick={() =>
+              showDialog?.(
+                <StreamFinishDialog
+                  onSuccess={() => push("/leaderboard")}
+                  onClose={closeDialog}
+                />
+              )
+            }
           >
             Finish stream
           </LargeLoadingButton>
