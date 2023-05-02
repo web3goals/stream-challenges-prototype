@@ -1,7 +1,8 @@
 import { Box, SxProps, Typography } from "@mui/material";
+import EntityList from "components/entity/EntityList";
 import Layout from "components/layout";
+import StreamCard from "components/stream/StreamCard";
 import {
-  CardBox,
   ExtraLargeLoadingButton,
   FullWidthSkeleton,
   LargeLoadingButton,
@@ -218,17 +219,29 @@ function ChallengeStarted(props: { sx?: SxProps }) {
   );
 }
 
-// TODO: Implement
 function ChallengeStreams(props: { sx?: SxProps }) {
+  const { chain } = useNetwork();
+
+  const { data: streams } = useContractRead({
+    address: chainToSupportedChainChallengeContractAddress(chain),
+    abi: challengeContractAbi,
+    functionName: "getLastChallengeStreams",
+  });
+
   return (
-    <Box
-      display="flex"
-      flexDirection="column"
-      alignItems="center"
-      width={1}
+    <EntityList
+      entities={streams}
+      renderEntityCard={(stream, index) => (
+        <StreamCard
+          authorAddress={stream.authorAddress}
+          startedTimestamp={stream.startedTimestamp}
+          finishedTimestamp={stream.finishedTimestamp}
+          description={stream.description}
+          key={index}
+        />
+      )}
+      noEntitiesText="😐 no streams"
       sx={{ ...props.sx }}
-    >
-      <CardBox>...</CardBox>
-    </Box>
+    />
   );
 }

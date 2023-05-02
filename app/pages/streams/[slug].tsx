@@ -188,9 +188,6 @@ function StreamRoom(props: {
             variant="outlined"
             disabled={!startRecording.isCallable}
             onClick={() => {
-              console.log(
-                `https://${window.location.host}/streams/rec/${props.id}`
-              );
               startRecording(
                 `https://${window.location.host}/streams/rec/${props.id}`
               );
