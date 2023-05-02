@@ -21,7 +21,7 @@ export const challengeContractAbi = [
   },
   {
     inputs: [],
-    name: "StreamNotFound",
+    name: "StreamNotStarted",
     type: "error",
   },
   {
@@ -183,6 +183,11 @@ export const challengeContractAbi = [
             type: "uint256",
           },
           {
+            internalType: "string",
+            name: "identifier",
+            type: "string",
+          },
+          {
             internalType: "address",
             name: "authorAddress",
             type: "address",
@@ -233,6 +238,11 @@ export const challengeContractAbi = [
             internalType: "uint256",
             name: "finishedTimestamp",
             type: "uint256",
+          },
+          {
+            internalType: "string",
+            name: "identifier",
+            type: "string",
           },
           {
             internalType: "address",
@@ -493,6 +503,57 @@ export const challengeContractAbi = [
     type: "function",
   },
   {
+    inputs: [
+      {
+        internalType: "address",
+        name: "authorAddress",
+        type: "address",
+      },
+    ],
+    name: "getLastChallengeStreamByAuthorAddress",
+    outputs: [
+      {
+        components: [
+          {
+            internalType: "uint256",
+            name: "startedTimestamp",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "finishedTimestamp",
+            type: "uint256",
+          },
+          {
+            internalType: "string",
+            name: "identifier",
+            type: "string",
+          },
+          {
+            internalType: "address",
+            name: "authorAddress",
+            type: "address",
+          },
+          {
+            internalType: "string",
+            name: "description",
+            type: "string",
+          },
+          {
+            internalType: "string",
+            name: "extraDataURI",
+            type: "string",
+          },
+        ],
+        internalType: "struct DataTypes.ChallengeStreamParams",
+        name: "",
+        type: "tuple",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [],
     name: "getLastChallengeStreams",
     outputs: [
@@ -507,6 +568,11 @@ export const challengeContractAbi = [
             internalType: "uint256",
             name: "finishedTimestamp",
             type: "uint256",
+          },
+          {
+            internalType: "string",
+            name: "identifier",
+            type: "string",
           },
           {
             internalType: "address",
@@ -808,6 +874,11 @@ export const challengeContractAbi = [
   },
   {
     inputs: [
+      {
+        internalType: "string",
+        name: "identifier",
+        type: "string",
+      },
       {
         internalType: "string",
         name: "description",

@@ -1,39 +1,199 @@
 import { useRecorder } from "@huddle01/react/app-utils";
 import { Audio, Video } from "@huddle01/react/components";
-import { usePeers } from "@huddle01/react/hooks";
-import { Typography } from "@mui/material";
+import { useLobby, usePeers, useRoom, useVideo } from "@huddle01/react/hooks";
+import { Box, Stack, Typography } from "@mui/material";
 import Layout from "components/layout";
-import { CardBox } from "components/styled";
+import { FullWidthSkeleton, LargeLoadingButton } from "components/styled";
+import { challengeContractAbi } from "contracts/abi/challengeContract";
+import { ethers } from "ethers";
 import { useRouter } from "next/router";
+import { useEffect, useRef } from "react";
+import { isAddressesEqual } from "utils/addresses";
+import { chainToSupportedChainChallengeContractAddress } from "utils/chains";
+import { stringToAddress } from "utils/converters";
+import { useAccount, useContractRead, useNetwork } from "wagmi";
 
 /**
- * Page for join a stream.
+ * Page with a stream.
  */
-export default function JoinStream() {
+export default function Stream() {
   const router = useRouter();
   const { slug } = router.query;
+  const { chain } = useNetwork();
+  const { joinLobby, isLobbyJoined } = useLobby();
+  const { isRoomJoined } = useRoom();
 
-  const { peers } = usePeers();
+  const { data: stream } = useContractRead({
+    address: chainToSupportedChainChallengeContractAddress(chain),
+    abi: challengeContractAbi,
+    functionName: "getLastChallengeStreamByAuthorAddress",
+    args: [stringToAddress(slug as string) || ethers.constants.AddressZero],
+  });
 
-  useRecorder(
-    slug?.toString() || "",
-    process.env.NEXT_PUBLIC_HUDDLE01_PROJECT_ID || ""
-  );
-
-  console.log("peers", peers);
+  // Join lobby when stream data is loaded.
+  useEffect(() => {
+    if (stream && joinLobby.isCallable) {
+      joinLobby(stream.identifier);
+    }
+  }, [stream, joinLobby]);
 
   return (
     <Layout maxWidth="md">
-      <CardBox>
-        <Typography fontWeight={700}>Peers</Typography>
-        <Typography sx={{ wordBreak: "break-all" }}>
-          {JSON.stringify(peers)}
-        </Typography>
-        {Object.values(peers)
-          .filter((peer) => peer.cam)
-          .map((peer) => (
-            <Typography>{peer.displayName}</Typography>
-          ))}
+      {isRoomJoined ? (
+        <StreamRoom
+          id={stream?.identifier}
+          authorAddress={stream?.authorAddress}
+          description={stream?.description}
+        />
+      ) : isLobbyJoined ? (
+        <StreamLobby />
+      ) : (
+        <FullWidthSkeleton />
+      )}
+    </Layout>
+  );
+}
+
+function StreamLobby() {
+  const { joinRoom } = useRoom();
+  const { fetchVideoStream, stopVideoStream, stream: videoStream } = useVideo();
+  const videoStreamRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    if (videoStream && videoStreamRef.current) {
+      videoStreamRef.current.srcObject = videoStream;
+    }
+  }, [videoStreamRef, videoStream]);
+
+  return (
+    <Box display="flex" flexDirection="column" alignItems="center">
+      <Typography variant="h4" fontWeight={700} textAlign="center">
+        ⚙️ Config camera, microphone
+      </Typography>
+      <Typography color="text.secondary" textAlign="center" mt={1}>
+        and join stream
+      </Typography>
+      {/* Actions */}
+      <Stack spacing={2} mt={2} minWidth={280}>
+        <LargeLoadingButton
+          variant="contained"
+          disabled={!joinRoom.isCallable}
+          onClick={joinRoom}
+        >
+          Join
+        </LargeLoadingButton>
+        <LargeLoadingButton
+          variant="outlined"
+          disabled={!fetchVideoStream.isCallable && !stopVideoStream.isCallable}
+          onClick={() => {
+            if (fetchVideoStream.isCallable) {
+              fetchVideoStream();
+            } else if (stopVideoStream.isCallable) {
+              stopVideoStream();
+            }
+          }}
+        >
+          {fetchVideoStream.isCallable
+            ? "Enable camera"
+            : stopVideoStream.isCallable
+            ? "Disable camera"
+            : "Loading camera..."}
+        </LargeLoadingButton>
+      </Stack>
+      {/* Video stream */}
+      {videoStream?.active && (
+        <Box mt={4}>
+          <video
+            ref={videoStreamRef}
+            autoPlay
+            muted
+            style={{ width: "360px", borderRadius: "24px" }}
+          />
+        </Box>
+      )}
+    </Box>
+  );
+}
+
+function StreamRoom(props: {
+  id?: string;
+  description?: string;
+  authorAddress?: string;
+}) {
+  const { address } = useAccount();
+  const { produceVideo, stopProducingVideo, stream: videoStream } = useVideo();
+  const { peers } = usePeers();
+  const videoStreamRef = useRef<HTMLVideoElement>(null);
+
+  useRecorder(
+    props.id || "",
+    process.env.NEXT_PUBLIC_HUDDLE01_PROJECT_ID || ""
+  );
+
+  useEffect(() => {
+    if (videoStream && videoStreamRef.current) {
+      videoStreamRef.current.srcObject = videoStream;
+    }
+  }, [videoStreamRef, videoStream]);
+
+  return (
+    <Box display="flex" flexDirection="column" alignItems="center">
+      <Typography variant="h4" fontWeight={700} textAlign="center">
+        👀 Stream - {props.description}
+      </Typography>
+      {/* Actions */}
+      <Stack spacing={2} mt={2} minWidth={280}>
+        <LargeLoadingButton
+          variant="outlined"
+          disabled={!produceVideo.isCallable && !stopProducingVideo.isCallable}
+          onClick={() => {
+            if (produceVideo.isCallable) {
+              produceVideo(videoStream);
+            } else if (stopProducingVideo.isCallable) {
+              stopProducingVideo();
+            }
+          }}
+        >
+          {produceVideo.isCallable
+            ? "Produce camera"
+            : stopProducingVideo.isCallable
+            ? "Stop producing camera"
+            : "Loading camera..."}
+        </LargeLoadingButton>
+        {/* TODO: Implement button */}
+        {isAddressesEqual(address, props.authorAddress) && (
+          <LargeLoadingButton
+            variant="contained"
+            disabled={false}
+            onClick={() => {}}
+          >
+            Start (stop) recording
+          </LargeLoadingButton>
+        )}
+        {/* TODO: Implement button */}
+        {isAddressesEqual(address, props.authorAddress) && (
+          <LargeLoadingButton
+            variant="contained"
+            disabled={true}
+            onClick={() => {}}
+          >
+            Finish stream
+          </LargeLoadingButton>
+        )}
+      </Stack>
+      {/* Video stream */}
+      {videoStream?.active && (
+        <Box mt={4}>
+          <video
+            ref={videoStreamRef}
+            autoPlay
+            muted
+            style={{ width: "360px", borderRadius: "24px" }}
+          />
+        </Box>
+      )}
+      {/* Peers */}
+      <Box mt={4}>
         {Object.values(peers)
           .filter((peer) => peer.cam)
           .map((peer) => (
@@ -41,7 +201,7 @@ export default function JoinStream() {
               key={peer.peerId}
               peerId={peer.peerId}
               track={peer.cam}
-              // debug
+              style={{ width: "180px", borderRadius: "24px" }}
             />
           ))}
         {Object.values(peers)
@@ -49,7 +209,7 @@ export default function JoinStream() {
           .map((peer) => (
             <Audio key={peer.peerId} peerId={peer.peerId} track={peer.mic} />
           ))}
-      </CardBox>
-    </Layout>
+      </Box>
+    </Box>
   );
 }
