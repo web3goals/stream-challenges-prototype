@@ -40,7 +40,7 @@ export default function AccountProfile(props: { address: string }) {
       <Box display="flex" flexDirection="column" alignItems="center">
         {/* Image */}
         <AccountAvatar
-          account={props.address}
+          accountAddress={props.address}
           accountProfileUriData={profileUriData}
           size={164}
           emojiSize={64}

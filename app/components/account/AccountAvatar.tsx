@@ -7,7 +7,7 @@ import { ipfsUriToHttpUri } from "utils/converters";
  * Component with account avatar.
  */
 export default function AccountAvatar(props: {
-  account: string;
+  accountAddress: string;
   accountProfileUriData?: ProfileUriDataEntity;
   size?: number;
   emojiSize?: number;
@@ -19,7 +19,7 @@ export default function AccountAvatar(props: {
         width: props.size || 48,
         height: props.size || 48,
         borderRadius: props.size || 48,
-        background: emojiAvatarForAddress(props.account).color,
+        background: emojiAvatarForAddress(props.accountAddress).color,
         ...props.sx,
       }}
       src={
@@ -29,7 +29,7 @@ export default function AccountAvatar(props: {
       }
     >
       <Typography fontSize={props.emojiSize || 22}>
-        {emojiAvatarForAddress(props.account).emoji}
+        {emojiAvatarForAddress(props.accountAddress).emoji}
       </Typography>
     </Avatar>
   );
