@@ -30,10 +30,7 @@ makeSuiteCleanRoom("Challenge Stream Finishing", function () {
     // Try two by user one
     await expect(
       challengeContract.connect(userOne).finishStream(streamUris.one)
-    ).to.be.revertedWithCustomError(
-      challengeContract,
-      ERRORS.streamAlreadyFinished
-    );
+    ).to.be.revertedWith(ERRORS.streamAlreadyFinished);
     // Check streamers
     const streamers = await challengeContract.getStreamers();
     expect(streamers.length).to.equal(2);

@@ -33,10 +33,7 @@ makeSuiteCleanRoom("Challenge Stream Starting", function () {
       challengeContract
         .connect(userTwo)
         .startStream(streamIdentifiers.three, streamDescriptions.two)
-    ).to.be.revertedWithCustomError(
-      challengeContract,
-      ERRORS.streamAlreadyStarted
-    );
+    ).to.be.revertedWith(ERRORS.streamAlreadyStarted);
     // Check streams
     const streams = await challengeContract.getLastChallengeStreams();
     expect(streams.length).to.equal(2);

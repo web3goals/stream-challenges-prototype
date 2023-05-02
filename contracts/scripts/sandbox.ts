@@ -1,5 +1,5 @@
 import { ethers } from "hardhat";
-import { Challenge__factory, Profile__factory } from "../typechain-types";
+import { Challenge__factory } from "../typechain-types";
 
 async function main() {
   // Init account

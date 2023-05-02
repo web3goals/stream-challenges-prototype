@@ -1,35 +1,5 @@
 export const challengeContractAbi = [
   {
-    inputs: [],
-    name: "LastChallengeFinished",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "LastChallengeNotFinished",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "StreamAlreadyFinished",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "StreamAlreadyStarted",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "StreamNotStarted",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "TokenNotTransferable",
-    type: "error",
-  },
-  {
     anonymous: false,
     inputs: [
       {
