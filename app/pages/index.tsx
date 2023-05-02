@@ -1,8 +1,10 @@
 import { Box, SxProps, Typography } from "@mui/material";
 import Layout from "components/layout";
 import {
+  CardBox,
   ExtraLargeLoadingButton,
   FullWidthSkeleton,
+  LargeLoadingButton,
   ThickDivider,
 } from "components/styled";
 import { challengeContractAbi } from "contracts/abi/challengeContract";
@@ -32,8 +34,6 @@ export default function Landing() {
       <Header />
       <ThickDivider sx={{ mt: 8, mb: 8 }} />
       <Challenge />
-      <ThickDivider sx={{ mt: 8, mb: 8 }} />
-      <ActiveStreams />
     </Layout>
   );
 }
@@ -171,7 +171,7 @@ function ChallengeNotStarted(props: { onStarted: Function; sx?: SxProps }) {
       >
         is not yet started
       </Typography>
-      <ExtraLargeLoadingButton
+      <LargeLoadingButton
         variant="outlined"
         disabled={isContractPrepareError || !contractWrite}
         loading={isContractWriteLoading || isTransactionLoading}
@@ -179,7 +179,7 @@ function ChallengeNotStarted(props: { onStarted: Function; sx?: SxProps }) {
         sx={{ mt: 2 }}
       >
         Start
-      </ExtraLargeLoadingButton>
+      </LargeLoadingButton>
     </>
   );
 }
@@ -194,44 +194,41 @@ function ChallengeStarted(props: { sx?: SxProps }) {
       functionName: "getLastChallenge",
     });
 
-  if (lastChallenge) {
-    return (
-      <>
-        <Typography
-          color="text.secondary"
-          textAlign="center"
-          sx={{ ...props.sx }}
-        >
-          will be ended on{" "}
-          {bigNumberTimestampToLocaleString(lastChallenge.finishTimestamp)}
-        </Typography>
-        <Link href="/streams/host" passHref legacyBehavior>
-          <ExtraLargeLoadingButton variant="outlined" sx={{ mt: 2 }}>
-            Participate
-          </ExtraLargeLoadingButton>
-        </Link>
-      </>
-    );
+  if (!lastChallenge) {
+    return <FullWidthSkeleton sx={{ ...props.sx }} />;
   }
 
-  return <FullWidthSkeleton sx={{ ...props.sx }} />;
+  return (
+    <>
+      <Typography
+        color="text.secondary"
+        textAlign="center"
+        sx={{ ...props.sx }}
+      >
+        will be ended on{" "}
+        {bigNumberTimestampToLocaleString(lastChallenge.finishTimestamp)}
+      </Typography>
+      <Link href="/streams/start" passHref legacyBehavior>
+        <LargeLoadingButton variant="outlined" sx={{ mt: 2 }}>
+          Participate
+        </LargeLoadingButton>
+      </Link>
+      <ChallengeStreams sx={{ mt: 4 }} />
+    </>
+  );
 }
 
 // TODO: Implement
-function ActiveStreams(props: { sx?: SxProps }) {
+function ChallengeStreams(props: { sx?: SxProps }) {
   return (
     <Box
       display="flex"
       flexDirection="column"
       alignItems="center"
+      width={1}
       sx={{ ...props.sx }}
     >
-      <Typography variant="h4" fontWeight={700} textAlign="center">
-        👀 Active streams
-      </Typography>
-      <Typography color="text.secondary" textAlign="center" mt={1}>
-        ...
-      </Typography>
+      <CardBox>...</CardBox>
     </Box>
   );
 }
