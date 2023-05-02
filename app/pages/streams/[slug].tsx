@@ -1,6 +1,12 @@
 import { useRecorder } from "@huddle01/react/app-utils";
 import { Audio, Video } from "@huddle01/react/components";
-import { useLobby, usePeers, useRoom, useVideo } from "@huddle01/react/hooks";
+import {
+  useLobby,
+  usePeers,
+  useRecording,
+  useRoom,
+  useVideo,
+} from "@huddle01/react/hooks";
 import { Box, Stack, Typography } from "@mui/material";
 import Layout from "components/layout";
 import { FullWidthSkeleton, LargeLoadingButton } from "components/styled";
@@ -123,6 +129,12 @@ function StreamRoom(props: {
   const { address } = useAccount();
   const { produceVideo, stopProducingVideo, stream: videoStream } = useVideo();
   const { peers } = usePeers();
+  const {
+    startRecording,
+    stopRecording,
+    error: recordingError,
+    data: recordingData,
+  } = useRecording();
   const videoStreamRef = useRef<HTMLVideoElement>(null);
 
   useRecorder(
@@ -136,13 +148,20 @@ function StreamRoom(props: {
     }
   }, [videoStreamRef, videoStream]);
 
+  // Open link with recording in new tab
+  useEffect(() => {
+    if ((recordingData as any)?.s3URL) {
+      window.open((recordingData as any).s3URL);
+    }
+  }, [recordingData]);
+
   return (
     <Box display="flex" flexDirection="column" alignItems="center">
       <Typography variant="h4" fontWeight={700} textAlign="center">
         👀 Stream - {props.description}
       </Typography>
       {/* Actions */}
-      <Stack spacing={2} mt={2} minWidth={280}>
+      <Stack spacing={2} mt={2} minWidth={320}>
         <LargeLoadingButton
           variant="outlined"
           disabled={!produceVideo.isCallable && !stopProducingVideo.isCallable}
@@ -160,14 +179,29 @@ function StreamRoom(props: {
             ? "Stop producing camera"
             : "Loading camera..."}
         </LargeLoadingButton>
-        {/* TODO: Implement button */}
         {isAddressesEqual(address, props.authorAddress) && (
           <LargeLoadingButton
             variant="contained"
-            disabled={false}
-            onClick={() => {}}
+            disabled={!startRecording.isCallable}
+            onClick={() => {
+              console.log(
+                `https://${window.location.host}/streams/rec/${props.id}`
+              );
+              startRecording(
+                `https://${window.location.host}/streams/rec/${props.id}`
+              );
+            }}
           >
-            Start (stop) recording
+            Start recording
+          </LargeLoadingButton>
+        )}
+        {isAddressesEqual(address, props.authorAddress) && (
+          <LargeLoadingButton
+            variant="contained"
+            disabled={!stopRecording.isCallable}
+            onClick={() => stopRecording()}
+          >
+            Stop recording
           </LargeLoadingButton>
         )}
         {/* TODO: Implement button */}
