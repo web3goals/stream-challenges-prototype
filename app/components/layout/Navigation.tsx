@@ -10,17 +10,13 @@ import {
   MenuItem,
   SxProps,
   Toolbar,
-  Typography,
 } from "@mui/material";
 import { Box } from "@mui/system";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { CONTACTS } from "constants/contacts";
 import Link from "next/link";
-import packageJson from "package.json";
 import { useState } from "react";
-import { chainToSupportedChainConfig } from "utils/chains";
-import { isDev } from "utils/environment";
-import { useAccount, useNetwork } from "wagmi";
+import { useAccount } from "wagmi";
 
 /**
  * Component with navigation.
@@ -36,103 +32,83 @@ export default function Navigation() {
     >
       <Container maxWidth="lg">
         <Toolbar disableGutters>
-          <LogoDesktop
-            sx={{ display: { xs: "none", md: "flex" }, flexGrow: 1 }}
-          />
-          <LogoMobile
-            sx={{ display: { xs: "flex", md: "none" }, flexGrow: 1 }}
-          />
-          <NavigationDesktop
-            sx={{ display: { xs: "none", md: "flex" }, ml: 1 }}
-          />
-          <NavigationMobile
-            sx={{ display: { xs: "flex", md: "none" }, ml: 1 }}
-          />
+          <Logo sx={{ flexGrow: 1 }} />
+          <Links sx={{ ml: 1 }} />
         </Toolbar>
       </Container>
     </AppBar>
   );
 }
 
-function LogoDesktop(props: { sx?: SxProps }) {
-  const { chain } = useNetwork();
-
+function Logo(props: { sx?: SxProps }) {
   return (
-    <Box sx={{ alignItems: "center", ...props.sx }}>
+    <Box sx={{ display: "flex", alignItems: "center", ...props.sx }}>
       <Link href="/" passHref legacyBehavior>
         <MuiLink variant="h6" color="#000000" fontWeight={700}>
           🏆 Stream Challenges
         </MuiLink>
       </Link>
-      <Typography color="text.secondary" variant="caption" ml={1}>
-        {packageJson.version}-{isDev() ? "dev" : "beta"} |{" "}
-        {chainToSupportedChainConfig(chain).chain.id}
-      </Typography>
     </Box>
   );
 }
 
-function LogoMobile(props: { sx?: SxProps }) {
-  const { chain } = useNetwork();
-
-  return (
-    <Box sx={{ flexDirection: "column", ...props.sx }}>
-      <Link href="/" passHref legacyBehavior>
-        <MuiLink variant="h6" color="#000000" fontWeight={700}>
-          🏆 SC
-        </MuiLink>
-      </Link>
-      <Typography color="text.secondary" variant="caption">
-        {packageJson.version}-{isDev() ? "dev" : "beta"} |{" "}
-        {chainToSupportedChainConfig(chain).chain.id}
-      </Typography>
-    </Box>
-  );
-}
-
-function NavigationDesktop(props: { sx?: SxProps }) {
+function Links(props: { sx?: SxProps }) {
   const { isConnected, address } = useAccount();
 
   return (
-    <Box sx={{ alignItems: "center", ...props.sx }}>
+    <Box sx={{ display: "flex", alignItems: "center", ...props.sx }}>
       {isConnected && (
         <Link href={`/accounts/${address}`} passHref legacyBehavior>
-          <MuiLink fontWeight={700} color="inherit" ml={3.5}>
+          <MuiLink
+            fontWeight={700}
+            color="inherit"
+            display={{ xs: "none", sm: "flex" }}
+          >
             Account
           </MuiLink>
         </Link>
       )}
       <Link href="/#challenge" passHref legacyBehavior>
-        <MuiLink fontWeight={700} color="inherit" ml={3.5}>
+        <MuiLink
+          fontWeight={700}
+          color="inherit"
+          display={{ xs: "none", sm: "flex" }}
+          ml={3.5}
+        >
           Challenge
         </MuiLink>
       </Link>
       <Link href="/leaderboard" passHref legacyBehavior>
-        <MuiLink fontWeight={700} color="inherit" ml={3.5}>
+        <MuiLink
+          fontWeight={700}
+          color="inherit"
+          display={{ xs: "none", sm: "flex" }}
+          ml={3.5}
+        >
           Leaderboard
         </MuiLink>
       </Link>
       <Box ml={3.5}>
-        <ConnectButton showBalance={false} accountStatus="full" />
+        <ConnectButton
+          showBalance={false}
+          accountStatus="avatar"
+          chainStatus="icon"
+        />
       </Box>
-      <NavigationMenu sx={{ ml: 1.5 }} />
-    </Box>
-  );
-}
-
-function NavigationMobile(props: { sx?: SxProps }) {
-  return (
-    <Box sx={{ alignItems: "center", ...props.sx }}>
-      <ConnectButton
-        showBalance={false}
-        accountStatus="avatar"
-        chainStatus="icon"
-      />
+      <IconButton
+        component="a"
+        target="_blank"
+        href={CONTACTS.github}
+        color="inherit"
+        sx={{ display: { xs: "none", sm: "flex" }, ml: 2 }}
+      >
+        <GitHub fontSize="small" />
+      </IconButton>
       <NavigationMenu
         displayAccountLink
         displayChallengeLink
         displayLeaderboardLink
-        sx={{ ml: 1.5 }}
+        sx={{ display: { xs: "flex", sm: "none" }, ml: 1.5 }}
       />
     </Box>
   );
