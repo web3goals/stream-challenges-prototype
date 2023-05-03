@@ -1,4 +1,6 @@
-# 🏆 Stream Challenges
+![Cover](cover.png)
+
+## ✨ About
 
 Today, it's hard for a beginner blogger to stand out and get an audience. To solve this problem, I propose a new approach to streaming!
 
